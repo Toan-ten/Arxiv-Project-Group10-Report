@@ -1,0 +1,10 @@
+# Generated HTML, downloaded themes, execution cache and build logs.
+_build/
+.cache/
+.jupyter_cache/
+.ipynb_checkpoints/
+__pycache__/
+
+# Keep local Python environments out of the book sources.
+.venv/
+venv/

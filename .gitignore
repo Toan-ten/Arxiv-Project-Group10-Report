@@ -218,3 +218,13 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+/_build/
+
+# Internal project documents at the repository root.
+/AGENTS.md
+/PROJECT_BRIEF.md
+/M1_CHECKLIST.md
+
+# Environment-specific settings; keep the shareable example.
+.env.*
+!.env.example
