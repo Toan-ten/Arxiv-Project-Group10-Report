@@ -1,55 +1,59 @@
 # Đồ án arXiv — Group 10
 
-Đây là báo cáo đồ án arXiv của **Group 10** trong môn Introduction to Data Science
-tại HCMUS. Nhóm gồm bốn thành viên:
+*Báo cáo học phần Introduction to Data Science — HCMUS*
 
-- **Nguyễn Văn Toàn** — MSSV 24120232.
-- **Trần Văn Tấn Khôi** — MSSV 24120010.
-- **Lê Thành Đạt** — MSSV 24120035.
-- **Trương Tuấn Anh** — MSSV 24120260.
+Nhóm 10 thực hiện đồ án xử lý dữ liệu bài báo khoa học từ arXiv. Đồ án gồm ba giai đoạn: thu thập dữ liệu, phân tích và chuẩn hóa nội dung, sau đó đối chiếu thông tin tài liệu tham khảo.
 
-Báo cáo tập trung vào **Milestone 1 — Data Crawling** và dành một phần cho
-Milestone 2 — Parsing & Standardization.
+Báo cáo trình bày cách nhóm thực hiện từng giai đoạn, những vấn đề gặp phải trong quá trình triển khai và kết quả thực nghiệm tương ứng.
 
-:::{important}
-Bản hiện tại là khung báo cáo. Phần kết quả thu thập dữ liệu và benchmark
-đang chờ số liệu thực nghiệm.
+## Thành viên nhóm
+
+- **Nguyễn Văn Toàn** — MSSV 24120232
+- **Trần Văn Tấn Khôi** — MSSV 24120010
+- **Lê Thành Đạt** — MSSV 24120035
+- **Trương Tuấn Anh** — MSSV 24120260
+
+## Tổng quan đồ án
+
+Đồ án được chia thành ba milestone:
+
+1. **Milestone 1 — Data Crawling:** Thu thập thông tin bài báo từ arXiv, các phiên bản được công bố, tệp nguồn TeX/BibTeX và dữ liệu tham khảo cần thiết.
+2. **Milestone 2 — Parsing & Standardization:** Phân tích cấu trúc nội dung LaTeX/BibTeX, chuẩn hóa dữ liệu và xử lý sự khác biệt giữa các phiên bản.
+3. **Milestone 3 — Reference Matching:** Xây dựng phương pháp đối chiếu các mục tài liệu tham khảo trong BibTeX với thông tin tham chiếu tương ứng.
+
+Dữ liệu thu thập ở M1 là đầu vào cho quá trình xử lý ở M2 và đối chiếu tham khảo ở M3.
+
+## Phạm vi thực hiện Milestone 1
+
+Nhóm được phân công **bốn khoảng arXiv ID**, mỗi thành viên phụ trách một khoảng gồm 5.000 ID, tương ứng **20.000 ID ứng viên**.
+
+Đây là số lượng ID cần kiểm tra, không phải số bài báo chắc chắn tồn tại. Số bài hợp lệ, số phiên bản và kết quả thu thập sẽ được thống kê từ dữ liệu thực tế.
+
+Chi tiết các khoảng ID được trình bày tại [M1 — Mục tiêu và phạm vi](m1/index.md).
+
+:::{admonition} Tiến độ hiện tại
+:class: note
+
+Nhóm đã xây dựng và kiểm thử các thành phần quản lý ID, tra cứu thông tin bài báo và phiên bản, tải tệp nguồn, lưu trữ dữ liệu và hỗ trợ tiếp tục công việc sau khi bị gián đoạn. Một số chức năng đã được kiểm tra với dữ liệu thật từ arXiv.
+
+Quá trình thu thập trên toàn bộ phạm vi được giao vẫn đang được thực hiện. Thống kê corpus và kết quả benchmark cuối trên Google Colab sẽ được bổ sung sau khi có dữ liệu và log chạy thực tế.
 :::
 
-## Mục tiêu đồ án
+## Nội dung báo cáo
 
-Đồ án gồm ba giai đoạn có quan hệ phụ thuộc:
+**Milestone 1 — Data Crawling**
 
-1. **M1 — Data Crawling:** thu thập các publication trong phạm vi được giao,
-   mọi version, nguồn TeX/BibTeX và metadata cần thiết.
-2. **M2 — Parsing & Standardization:** phân tích và chuẩn hóa nội dung LaTeX,
-   BibTeX; xây dựng cấu trúc nội dung và xử lý trùng lặp giữa các version.
-3. **M3 — Reference Matching:** xây dựng và đánh giá phương pháp ghép BibTeX
-   với references của cùng publication.
+- [Mục tiêu và phạm vi](m1/index.md)
+- [Phương pháp thu thập dữ liệu](m1/method.md)
+- [Kết quả thu thập](m1/results.md)
+- [Đánh giá hiệu năng (Benchmark)](m1/benchmark.md)
 
-Corpus của M1 là đầu vào cho quá trình xử lý ở M2 và ghép tham chiếu ở M3.
+**Milestone 2 — Parsing & Standardization**
 
-## Vai trò của báo cáo
+- [Tổng quan Milestone 2](m2/index.md)
 
-Báo cáo trình bày phạm vi dữ liệu, phương pháp thu thập, thống kê corpus và
-đánh giá hiệu năng. Các kết quả được gắn với dữ liệu đầu vào và điều kiện chạy
-để có thể kiểm tra và tái lập.
+**Tài liệu liên quan**
 
-- [Repository code](https://github.com/Toan-ten/Arxiv-Project-Group10): nơi phát triển mã nguồn qua các milestone.
-- [Repository báo cáo](https://github.com/Toan-ten/Arxiv-Project-Group10-Report): nơi lưu nguồn Book.
-
-## Đọc báo cáo
-
-- [M1: mục tiêu và phạm vi](m1/index.md).
-- [M1: phương pháp thu thập](m1/method.md).
-- [Kết quả corpus: chưa có dữ liệu](m1/results.md).
-- [Benchmark: chưa có dữ liệu](m1/benchmark.md).
-- [M2: trang chuẩn bị, chưa triển khai](m2/index.md).
-- [Tài liệu tham khảo](sources.md).
-
-## Phạm vi báo cáo
-
-Phạm vi M1 gồm bốn khoảng arXiv ID được phân công cho các thành viên, trình bày
-tại [Mục tiêu và phạm vi](m1/index.md). Các khoảng này xác định vị trí ID ứng viên;
-số bài báo hợp lệ và mức độ thu thập thành công sẽ được báo cáo từ dữ liệu thực tế.
-M2 hiện mới có phần giới thiệu mục tiêu, chưa có kết quả triển khai.
+- [Tài liệu tham khảo](sources.md)
+- [Repository mã nguồn](https://github.com/Toan-ten/Arxiv-Project-Group10)
+- [Repository báo cáo](https://github.com/Toan-ten/Arxiv-Project-Group10-Report)
