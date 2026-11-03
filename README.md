@@ -13,5 +13,8 @@ Hướng dẫn sử dụng Windows PowerShell và ghi rõ các phiên bản đã
 - Cấu hình và thứ tự điều hướng nằm trong `report_book/myst.yml`.
 - Mã nguồn xử lý dữ liệu nằm ở [repository code của nhóm](https://github.com/Toan-ten/Arxiv-Project-Group10).
 
-GitHub Pages chưa được triển khai. HTML sinh ra khi build chỉ dùng để xem cục bộ
-và được bỏ qua trong Git.
+Workflow [`deploy-book.yml`](.github/workflows/deploy-book.yml) đã được chuẩn bị để
+build và triển khai Book lên GitHub Pages. Xem [hướng dẫn bật Pages và kiểm tra
+website](report_book/README.md#triển-khai-github-pages). Website chỉ được xem là
+hoạt động sau khi workflow chạy thành công và URL công khai được kiểm tra.
+HTML sinh khi build được bỏ qua trong Git.
