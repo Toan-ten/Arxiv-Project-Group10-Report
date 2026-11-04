@@ -1,21 +1,29 @@
 version: 1
 project:
   id: group10-arxiv-report
-  title: "Đồ án arXiv — Group 10"
-  description: "Khung báo cáo Introduction to Data Science: M1 Data Crawling và M2 Parsing & Standardization."
+  title: "Đồ án arXiv — Nhóm 10"
+  description: "Báo cáo học phần Nhập môn Khoa học Dữ liệu: Giai đoạn 1 Thu thập dữ liệu và Giai đoạn 2 Phân tích cú pháp và chuẩn hóa."
   authors:
-    - name: Group 10
+    - name: "Nhóm 10"
+      affiliations:
+        - "Khoa Công nghệ Thông tin, Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM"
   github: https://github.com/Toan-ten/Arxiv-Project-Group10-Report
+  bibliography:
+    - references.bib
   toc:
     - file: index.md
-    - file: m1/index.md
+    - file: m1/01-overview.md
       children:
-        - file: m1/method.md
-        - file: m1/results.md
-        - file: m1/benchmark.md
-    - file: m2/index.md
-    - file: sources.md
+        - file: m1/02-methodology.md
+        - file: m1/03-statistics.ipynb
+        - file: m1/04-benchmark.ipynb
+    - file: m2/01-overview.md
+      children:
+        - file: m2/02-pipeline.md
+        - file: m2/03-statistics.ipynb
+        - file: m2/04-benchmark.ipynb
+    - file: appendix.md
 site:
   template: book-theme
   options:
-    logo_text: "arXiv · Group 10"
+    logo_text: "arXiv · Nhóm 10"

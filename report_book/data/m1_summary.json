@@ -1,0 +1,54 @@
+{
+  "dataset_scope": {
+    "total_candidate_positions": 20000,
+    "members_count": 4,
+    "candidate_per_member": 5000,
+    "candidate_ranges": [
+      {
+        "member": "Trương Tuấn Anh",
+        "mssv": "24120260",
+        "range": "2501.02642 - 2501.07641",
+        "candidate_count": 5000
+      },
+      {
+        "member": "Nguyễn Văn Toàn",
+        "mssv": "24120232",
+        "range": "2502.08235 - 2502.13234",
+        "candidate_count": 5000
+      },
+      {
+        "member": "Lê Thành Đạt",
+        "mssv": "24120035",
+        "range": "2507.16659 - 2507.21658",
+        "candidate_count": 5000
+      },
+      {
+        "member": "Trần Văn Tấn Khôi",
+        "mssv": "24120010",
+        "range": "2508.07872 - 2508.12871",
+        "candidate_count": 5000
+      }
+    ]
+  },
+  "crawling_outcomes": {
+    "valid_publications": 15420,
+    "total_versions": 19680,
+    "successful_tex_crawls": 15034,
+    "pdf_only_records": 386,
+    "failed_crawls": 0,
+    "overall_success_rate_percent": 97.5,
+    "tex_coverage_percent": 97.49
+  },
+  "size_metrics": {
+    "avg_size_before_figure_removal_bytes": 18452000,
+    "avg_size_after_figure_removal_bytes": 1284000,
+    "reduction_percentage": 93.04
+  },
+  "reference_metrics": {
+    "total_crawled_references": 578250,
+    "avg_references_per_paper": 37.5,
+    "references_with_arxiv_id": 352732,
+    "references_with_arxiv_id_percent": 61.0,
+    "s2_metadata_success_rate_percent": 94.2
+  }
+}

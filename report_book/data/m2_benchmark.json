@@ -1,0 +1,22 @@
+{
+  "environment": {
+    "platform": "Google Colab",
+    "hardware": "CPU-only (2 vCPU, Intel Xeon @ 2.20GHz)",
+    "ram_total_gb": 12.67,
+    "disk_total_gb": 107.72,
+    "os": "Ubuntu 22.04 LTS"
+  },
+  "time_metrics": {
+    "total_wall_time_seconds": 14250.0,
+    "avg_time_per_publication_seconds": 0.92,
+    "avg_time_per_version_seconds": 0.72
+  },
+  "memory_metrics": {
+    "peak_ram_mb": 680.5,
+    "avg_ram_mb": 310.2
+  },
+  "storage_metrics": {
+    "peak_disk_usage_gb": 8.5,
+    "final_parquet_output_gb": 2.4
+  }
+}

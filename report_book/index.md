@@ -1,59 +1,66 @@
-# Đồ án arXiv — Group 10
+# Đồ án arXiv, Nhóm 10
 
-*Báo cáo học phần Introduction to Data Science — HCMUS*
+*Báo cáo học phần Nhập môn Khoa học Dữ liệu, Khoa Công nghệ Thông tin, Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM*
 
-Nhóm 10 thực hiện đồ án xử lý dữ liệu bài báo khoa học từ arXiv. Đồ án gồm ba giai đoạn: thu thập dữ liệu, phân tích và chuẩn hóa nội dung, sau đó đối chiếu thông tin tài liệu tham khảo.
+## 1. Bài toán và mục tiêu dự án
 
-Báo cáo trình bày cách nhóm thực hiện từng giai đoạn, những vấn đề gặp phải trong quá trình triển khai và kết quả thực nghiệm tương ứng.
+Kho lưu trữ mở arXiv chứa hơn hai triệu bài báo khoa học thuộc các ngành toán học, vật lý và khoa học máy tính. Đồ án này tiếp cận trực tiếp mã nguồn LaTeX của từng bài báo thay vì chỉ lấy tệp PDF.
 
-## Thành viên nhóm
+Mục tiêu của đồ án gồm ba giai đoạn:
 
-- **Nguyễn Văn Toàn** — MSSV 24120232
-- **Trần Văn Tấn Khôi** — MSSV 24120010
-- **Lê Thành Đạt** — MSSV 24120035
-- **Trương Tuấn Anh** — MSSV 24120260
+1. Giai đoạn 1, Thu thập dữ liệu: Thu thập mọi phiên bản công bố của các bài báo được giao, tải mã nguồn LaTeX, lọc bỏ tệp ảnh để giảm dung lượng, và lấy dữ liệu trích dẫn qua API của Semantic Scholar.
+2. Giai đoạn 2, Phân tích cú pháp và chuẩn hóa: Lần theo đường biên dịch của tài liệu LaTeX đa tệp, chuyển văn bản thành cây phân cấp, chuẩn hóa biểu thức toán, chuyển `\bibitem` thành BibTeX, và khử trùng lặp qua các phiên bản.
+3. Giai đoạn 3, Đối sánh trích dẫn: Xuất dữ liệu sang các bảng Parquet theo chuẩn Hugging Face Datasets, huấn luyện mô hình học máy để nối từng mục BibTeX với định danh arXiv tương ứng, đánh giá bằng độ đo MRR@5, và trình bày poster khổ A2.
 
-## Tổng quan đồ án
+Báo cáo này là sản phẩm chung cho hai giai đoạn đầu. Toàn bộ bảng và hình trong báo cáo sinh trực tiếp khi biên dịch từ sổ tính phân tích, không dùng ảnh chụp.
 
-Đồ án được chia thành ba milestone:
+## 2. Sơ đồ quy trình xử lý tổng thể
 
-1. **Milestone 1 — Data Crawling:** Thu thập thông tin bài báo từ arXiv, các phiên bản được công bố, tệp nguồn TeX/BibTeX và dữ liệu tham khảo cần thiết.
-2. **Milestone 2 — Parsing & Standardization:** Phân tích cấu trúc nội dung LaTeX/BibTeX, chuẩn hóa dữ liệu và xử lý sự khác biệt giữa các phiên bản.
-3. **Milestone 3 — Reference Matching:** Xây dựng phương pháp đối chiếu các mục tài liệu tham khảo trong BibTeX với thông tin tham chiếu tương ứng.
+Quy trình xử lý của đồ án gồm bốn bước nối tiếp nhau:
 
-Dữ liệu thu thập ở M1 là đầu vào cho quá trình xử lý ở M2 và đối chiếu tham khảo ở M3.
+```{mermaid}
+flowchart LR
+    A["1. Thu thập Giai đoạn 1<br/>Khám phá ID và vN<br/>Tải tệp TeX và Bib<br/>Semantic Scholar"] --> B["2. Phân tích cú pháp Giai đoạn 2<br/>Tệp gốc document<br/>Đệ quy include<br/>Dựng cây phân cấp"]
+    B --> C["3. Chuẩn hóa Giai đoạn 2<br/>Dọn dẹp định dạng<br/>Chuẩn hóa toán<br/>Khử trùng lặp"]
+    C --> D["4. Đối sánh Giai đoạn 3<br/>Gán nhãn dữ liệu<br/>Trích chọn đặc trưng<br/>Đánh giá MRR@5"]
+```
 
-## Phạm vi thực hiện Milestone 1
+Dữ liệu đầu ra của Giai đoạn 1 là đầu vào cho bước phân tích cú pháp ở Giai đoạn 2. Dữ liệu sau khi chuẩn hóa và khử trùng lặp ở Giai đoạn 2 kết hợp với bảng tham chiếu ở Giai đoạn 1 để làm đầu vào cho mô hình học máy ở Giai đoạn 3.
 
-Nhóm được phân công **bốn khoảng arXiv ID**, mỗi thành viên phụ trách một khoảng gồm 5.000 ID, tương ứng **20.000 ID ứng viên**.
+## 3. Thành viên nhóm và phạm vi phân công
 
-Đây là số lượng ID cần kiểm tra, không phải số bài báo chắc chắn tồn tại. Số bài hợp lệ, số phiên bản và kết quả thu thập sẽ được thống kê từ dữ liệu thực tế.
+Nhóm 10 gồm bốn thành viên. Giảng viên giao cho nhóm bốn khoảng arXiv ID liên tục, mỗi thành viên phụ trách 5.000 số hiệu, tổng cộng 20.000 vị trí ID ứng viên:
 
-Chi tiết các khoảng ID được trình bày tại [M1 — Mục tiêu và phạm vi](m1/index.md).
+| **Thành viên** | **MSSV** | **Khoảng arXiv ID** | **Số vị trí ID** | **Nhiệm vụ chính** |
+| :--- | :--- | :--- | :--- | :--- |
+| Trương Tuấn Anh | 24120260 | từ 2501.02642 đến 2501.07641 | 5.000 | [...] |
+| Nguyễn Văn Toàn | 24120232 | từ 2502.08235 đến 2502.13234 | 5.000 | [...] |
+| Lê Thành Đạt | 24120035 | từ 2507.16659 đến 2507.21658 | 5.000 | [...] |
+| Trần Văn Tấn Khôi | 24120010 | từ 2508.07872 đến 2508.12871 | 5.000 | [...] |
 
-:::{admonition} Tiến độ hiện tại
-:class: note
+Con số 20.000 là số vị trí cần kiểm tra trên arXiv, không phải số bài báo chắc chắn tồn tại. Trên thực tế, một số vị trí chưa được cấp phát hoặc bài báo đã bị rút. Mỗi bài báo tồn tại lại có thể có nhiều phiên bản. Do đó, số vị trí ID ứng viên, số bài báo hợp lệ và tổng số phiên bản là ba số đo khác nhau.
 
-Nhóm đã xây dựng và kiểm thử các thành phần quản lý ID, tra cứu thông tin bài báo và phiên bản, tải tệp nguồn, lưu trữ dữ liệu và hỗ trợ tiếp tục công việc sau khi bị gián đoạn. Một số chức năng đã được kiểm tra với dữ liệu thật từ arXiv.
+## 4. Mục lục báo cáo
 
-Quá trình thu thập trên toàn bộ phạm vi được giao vẫn đang được thực hiện. Thống kê corpus và kết quả benchmark cuối trên Google Colab sẽ được bổ sung sau khi có dữ liệu và log chạy thực tế.
-:::
+Báo cáo gồm hai phần nội dung và một phụ lục:
 
-## Nội dung báo cáo
+Phần 1: Giai đoạn 1, Thu thập dữ liệu
+- 01. Tổng quan và phạm vi thu thập: Quy định về 20.000 vị trí ID, cấu trúc thư mục làm việc, và lược đồ hai bảng `papers`, `references`.
+- 02. Phương pháp và cài đặt: Cách tìm phiên bản qua arXiv API, tải TeX qua `export.arxiv.org`, lọc ảnh, và lấy trích dẫn qua API của Semantic Scholar.
+- 03. Thống kê dữ liệu: Bảng và biểu đồ về phân bố phiên bản, độ phủ TeX, độ giảm dung lượng khi lọc ảnh, và tỉ lệ trích dẫn có arXiv ID.
+- 04. Đánh giá hiệu năng: Thời gian chạy, mức RAM và dung lượng đĩa trên Google Colab ở chế độ CPU.
 
-**Milestone 1 — Data Crawling**
+Phần 2: Giai đoạn 2, Phân tích cú pháp và chuẩn hóa
+- 01. Tổng quan và cấu trúc dữ liệu: Mục tiêu cấu trúc hóa, cơ chế kho lưu trữ chung, và lược đồ ba bảng `elements`, `hierarchy`, `bibtex`.
+- 02. Quy trình phân tích cú pháp và khử trùng lặp: Thuật toán dò đường biên dịch đa tệp, dựng cây với ba dạng nút lá, chuẩn hóa toán, và khử trùng lặp hai cấp độ.
+- 03. Thống kê kết quả phân tích cú pháp: Tỉ lệ bóc tách thành công, độ giảm phần tử sau khử trùng lặp, và phân loại lỗi cú pháp.
+- 04. Đánh giá hiệu năng bộ phân tích cú pháp: Thời gian phân tích mỗi bài báo và mức dùng tài nguyên máy tính.
 
-- [Mục tiêu và phạm vi](m1/index.md)
-- [Phương pháp thu thập dữ liệu](m1/method.md)
-- [Kết quả thu thập](m1/results.md)
-- [Đánh giá hiệu năng (Benchmark)](m1/benchmark.md)
+Phần cuối:
+- Phụ lục: Hướng dẫn chạy lại thí nghiệm trên Colab, cấu hình môi trường, và danh mục tài liệu tham khảo.
 
-**Milestone 2 — Parsing & Standardization**
+## 5. Liên kết tài nguyên dự án
 
-- [Tổng quan Milestone 2](m2/index.md)
-
-**Tài liệu liên quan**
-
-- [Tài liệu tham khảo](sources.md)
-- [Repository mã nguồn](https://github.com/Toan-ten/Arxiv-Project-Group10)
-- [Repository báo cáo](https://github.com/Toan-ten/Arxiv-Project-Group10-Report)
+- Kho mã nguồn: https://github.com/Toan-ten/Arxiv-Project-Group10
+- Kho báo cáo: https://github.com/Toan-ten/Arxiv-Project-Group10-Report
+- Đề bài gốc: https://hcmus-cs-ta.github.io/lab-book/intro-ds/statement/

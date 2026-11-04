@@ -1,0 +1,35 @@
+{
+  "parsing_overview": {
+    "total_publications_processed": 15420,
+    "total_versions_processed": 19680,
+    "successful_parsed_versions": 19294,
+    "empty_records_versions": 386,
+    "failed_parsing_versions": 0,
+    "parsing_success_rate_percent": 98.04
+  },
+  "deduplication_metrics": {
+    "elements_before_dedup": 4820000,
+    "elements_after_dedup": 3140000,
+    "element_reduction_percent": 34.85,
+    "bibtex_entries_before_dedup": 612000,
+    "bibtex_entries_after_dedup": 435000,
+    "bibtex_reduction_percent": 28.92
+  },
+  "hierarchy_distribution": {
+    "avg_tree_depth": 4.2,
+    "max_tree_depth": 7,
+    "element_kinds": {
+      "sentence": 68.4,
+      "block_formula": 18.2,
+      "figure": 7.1,
+      "table": 3.5,
+      "item": 2.8
+    }
+  },
+  "parse_errors_analysis": {
+    "unconventional_macros": 42.0,
+    "unbalanced_delimiters": 28.5,
+    "non_standard_bib_style": 18.2,
+    "encoding_and_foreign_chars": 11.3
+  }
+}
