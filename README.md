@@ -34,7 +34,7 @@ Kho lưu trữ được tổ chức tách bạch giữa mã nguồn báo cáo xu
 - `report_book/`: Chứa toàn bộ mã nguồn cấu thành trang báo cáo Jupyter Book 2 theo yêu cầu của đề tài:
   - `myst.yml`: Cấu hình mục lục và giao diện báo cáo.
   - `index.md`: Trang giới thiệu tổng quan đề tài và phân công nhóm.
-  - `m1/`: Tổng quan, phương pháp, sổ tay thống kê và đo hiệu năng của Giai đoạn 1.
+  - `m1/`: Tổng quan, phương pháp khám phá, trích xuất nguồn, tài liệu tham khảo, khả năng chịu lỗi, sổ tay thống kê và đo kiểm hiệu năng của Giai đoạn 1.
   - `m2/`: Tổng quan, quy trình, sổ tay thống kê và đo hiệu năng của Giai đoạn 2.
   - `data/`: Các tệp số liệu thực nghiệm phục vụ sinh bảng và biểu đồ lúc biên dịch.
   - `references.bib`: Danh mục tài liệu tham khảo theo định dạng BibTeX.
