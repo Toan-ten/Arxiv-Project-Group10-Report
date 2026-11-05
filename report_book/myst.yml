@@ -14,9 +14,12 @@ project:
     - file: index.md
     - file: m1/01-overview.md
       children:
-        - file: m1/02-methodology.md
-        - file: m1/03-statistics.ipynb
-        - file: m1/04-benchmark.ipynb
+        - file: m1/02-discovery.md
+        - file: m1/03-source-extraction.md
+        - file: m1/04-references.md
+        - file: m1/05-resilience.md
+        - file: m1/06-statistics.ipynb
+        - file: m1/07-benchmark.ipynb
     - file: m2/01-overview.md
       children:
         - file: m2/02-pipeline.md
