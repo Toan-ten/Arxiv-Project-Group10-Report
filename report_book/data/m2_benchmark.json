@@ -1,4 +1,7 @@
 {
+  "is_placeholder": true,
+  "status": "pending_execution",
+  "note": "Khung lược đồ đo kiểm hiệu năng Giai đoạn 2 trên Google Colab CPU.",
   "environment": {
     "platform": "Google Colab",
     "hardware": "CPU-only (2 vCPU, Intel Xeon @ 2.20GHz)",
@@ -7,16 +10,16 @@
     "os": "Ubuntu 22.04 LTS"
   },
   "time_metrics": {
-    "total_wall_time_seconds": 14250.0,
-    "avg_time_per_publication_seconds": 0.92,
-    "avg_time_per_version_seconds": 0.72
+    "total_wall_time_seconds": null,
+    "avg_time_per_publication_seconds": null,
+    "avg_time_per_version_seconds": null
   },
   "memory_metrics": {
-    "peak_ram_mb": 680.5,
-    "avg_ram_mb": 310.2
+    "peak_ram_mb": null,
+    "avg_ram_mb": null
   },
   "storage_metrics": {
-    "peak_disk_usage_gb": 8.5,
-    "final_parquet_output_gb": 2.4
+    "peak_disk_usage_gb": null,
+    "final_parquet_output_gb": null
   }
 }

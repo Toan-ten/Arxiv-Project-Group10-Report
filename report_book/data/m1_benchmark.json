@@ -1,4 +1,7 @@
 {
+  "is_placeholder": true,
+  "status": "pending_colab_execution",
+  "note": "Khung lược đồ đo kiểm hiệu năng Giai đoạn 1 trên Google Colab CPU. Giá trị thực tế sẽ được cập nhật sau khi kết xuất nhật ký đo lường.",
   "environment": {
     "platform": "Google Colab",
     "hardware": "CPU-only (2 vCPU, Intel Xeon @ 2.20GHz)",
@@ -8,19 +11,20 @@
     "python_version": "3.10.12"
   },
   "time_metrics": {
-    "discovery_total_wall_time_seconds": 1840.5,
-    "crawl_total_wall_time_seconds": 64820.0,
-    "total_end_to_end_wall_time_seconds": 66660.5,
-    "avg_wall_time_per_paper_seconds": 4.32,
-    "avg_wall_time_per_version_seconds": 3.38
+    "single_paper_wall_time_seconds": null,
+    "avg_wall_time_per_paper_seconds": null,
+    "avg_wall_time_per_version_seconds": null,
+    "discovery_total_wall_time_seconds": null,
+    "crawl_total_wall_time_seconds": null,
+    "total_end_to_end_wall_time_seconds": null
   },
   "memory_metrics": {
-    "peak_ram_mb": 512.4,
-    "avg_ram_mb": 248.6,
+    "peak_ram_mb": null,
+    "avg_ram_mb": null,
     "sampling_interval_seconds": 10
   },
   "storage_metrics": {
-    "max_disk_usage_gb": 14.8,
-    "final_corpus_output_gb": 6.2
+    "max_disk_usage_gb": null,
+    "final_corpus_output_gb": null
   }
 }

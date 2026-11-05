@@ -1,4 +1,7 @@
 {
+  "is_placeholder": true,
+  "status": "pending_colab_execution",
+  "note": "Khung lược đồ dữ liệu tổng hợp Giai đoạn 1. Các giá trị thực nghiệm sẽ được cập nhật tự động sau khi hoàn tất lượt chạy trên máy ảo Google Colab.",
   "dataset_scope": {
     "total_candidate_positions": 20000,
     "members_count": 4,
@@ -31,24 +34,24 @@
     ]
   },
   "crawling_outcomes": {
-    "valid_publications": 15420,
-    "total_versions": 19680,
-    "successful_tex_crawls": 15034,
-    "pdf_only_records": 386,
-    "failed_crawls": 0,
-    "overall_success_rate_percent": 97.5,
-    "tex_coverage_percent": 97.49
+    "valid_publications": null,
+    "total_versions": null,
+    "successful_tex_crawls": null,
+    "pdf_only_records": null,
+    "failed_crawls": null,
+    "overall_success_rate_percent": null,
+    "tex_coverage_percent": null
   },
   "size_metrics": {
-    "avg_size_before_figure_removal_bytes": 18452000,
-    "avg_size_after_figure_removal_bytes": 1284000,
-    "reduction_percentage": 93.04
+    "avg_size_before_figure_removal_bytes": null,
+    "avg_size_after_figure_removal_bytes": null,
+    "reduction_percentage": null
   },
   "reference_metrics": {
-    "total_crawled_references": 578250,
-    "avg_references_per_paper": 37.5,
-    "references_with_arxiv_id": 352732,
-    "references_with_arxiv_id_percent": 61.0,
-    "s2_metadata_success_rate_percent": 94.2
+    "total_crawled_references": null,
+    "avg_references_per_paper": null,
+    "references_with_arxiv_id": null,
+    "references_with_arxiv_id_percent": null,
+    "s2_metadata_success_rate_percent": null
   }
 }
