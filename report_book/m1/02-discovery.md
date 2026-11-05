@@ -26,9 +26,12 @@ Hệ thống gửi yêu cầu HTTP GET kèm các tham số truy vấn:
 
 Máy chủ phản hồi dữ liệu theo định dạng Atom XML kèm tiêu đề `Content-Type: application/atom+xml`.
 
-Về mặt kỹ thuật, việc truy vấn qua arXiv API có hai phương án tiếp cận:
-1. Truy vấn đơn lẻ từng số hiệu: Mỗi yêu cầu chỉ kiểm tra đúng một ID với `max_results = 1`. Ưu điểm là cô lập hoàn toàn trạng thái và nhật ký lỗi của từng bài báo, nhưng thời gian chờ mạng thuần túy với quy mô 20.000 bài sẽ chiếm tối thiểu 16,67 giờ do bắt buộc giãn cách 3,0 giây giữa các lượt gọi.
-2. Truy vấn theo cụm: Tham số `id_list` cho phép truyền danh sách nhiều số hiệu phân tách bằng dấu phẩy. Phương án này gom hàng chục số hiệu vào một lượt gọi duy nhất, giúp rút ngắn tổng thời gian khám phá toàn bộ 20.000 bài xuống dưới 30 phút mà vẫn bảo đảm khoảng nghỉ 3,0 giây hợp lệ giữa các yêu cầu. Bộ điều phối hỗ trợ cả hai chế độ tùy thuộc vào cấu hình thử nghiệm.
+Về mặt kỹ thuật, hệ thống áp dụng triệt để chiến lược tra cứu đơn lẻ từng số hiệu: Mỗi yêu cầu chỉ kiểm tra duy nhất một số hiệu với tham số `max_results = 1`. Mặc dù tham số `id_list` của arXiv API trên lý thuyết cho phép truyền chuỗi nhiều số hiệu phân tách bằng dấu phẩy, việc gom nhiều số hiệu vào một lượt gọi làm tăng nguy cơ sai lệch trạng thái khi phản hồi bị lỗi một phần hoặc thiếu hụt thẻ kết quả.
+
+Bằng việc ràng buộc một yêu cầu tương ứng một số hiệu duy nhất, hệ thống đạt được ba lợi ích kỹ thuật quan trọng:
+1. Cô lập hoàn toàn trạng thái: Trạng thái khám phá của từng số hiệu được ghi nhận độc lập và lập tức vào tệp `manifest.json` tương ứng mà không bị phụ thuộc vào kết quả của các số hiệu khác.
+2. Kiểm tra tính toàn vẹn khắt khe: Bộ bóc tách Atom XML chủ động xác thực số lượng phần tử trả về. Nếu phản hồi chứa nhiều hơn một thẻ `<entry>` hoặc trường tổng số kết quả `totalResults` khác 1, hệ thống lập tức báo lỗi để ngăn ngừa việc nhầm lẫn dữ liệu giữa các bài báo.
+3. Đồng bộ hoàn hảo với điểm kiểm soát: Tiến trình thu thập có thể dừng hoặc khôi phục an toàn tại bất kỳ bài báo nào mà không để lại các trạng thái ghi dở dang trên hệ thống tệp.
 
 ## 3. Tự xây dựng bộ bóc tách Atom XML qua thư viện chuẩn
 

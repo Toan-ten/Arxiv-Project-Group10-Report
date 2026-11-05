@@ -22,7 +22,14 @@ Tổng quy mô cần khảo sát là 20.000 vị trí số hiệu. Dữ liệu t
 
 Với mỗi bài báo hợp lệ, hệ thống thu thập tất cả các phiên bản có sẵn. Bài báo nộp một lần được quản lý với hậu tố `v1`.
 
-## 3. Tổ chức dữ liệu làm việc
+## 3. Chiến lược tập mẫu thử nghiệm tất định
+
+Trước khi vận hành đường ống trên toàn bộ quy mô 20.000 số hiệu, hệ thống thiết lập hai tập mẫu thử nghiệm tất định được trích xuất trực tiếp từ các dải số hiệu phân công:
+
+- Tập mẫu kiểm thử khói (`pilot_10`): Lấy 2 số hiệu đầu tiên trong mỗi khoảng phân công của 4 thành viên (tổng cộng 8 bài đại diện). Tập mẫu này phục vụ kiểm tra thông suốt kết nối mạng, quyền ghi đĩa, cơ chế dừng khẩn cấp và các thao tác bóc tách cơ bản mà không làm tiêu tốn tài nguyên.
+- Tập mẫu kiểm chuẩn hiệu năng (`pilot_500`): Lấy chính xác 125 số hiệu cho mỗi dải phân công của 4 thành viên (tổng cộng 500 bài). Tập mẫu này bao phủ đồng đều các giai đoạn khác nhau trong năm 2025 gồm tháng 1, tháng 2, tháng 7 và tháng 8. Đây là tập dữ liệu chuẩn mực để đo kiểm mức tiêu thụ bộ nhớ RAM, thời gian chạy và dung lượng lưu trữ có kiểm soát trước khi nhân rộng toàn diện.
+
+## 4. Tổ chức dữ liệu làm việc
 
 Dữ liệu thu thập cục bộ tuân thủ nghiêm ngặt hợp đồng lưu trữ phiên bản 2. Mỗi bài báo được quản lý trong một thư mục riêng biệt đặt tên theo số hiệu arXiv chuẩn hóa, sử dụng dấu gạch nối thay cho dấu chấm:
 
@@ -41,13 +48,13 @@ working_corpus/
 ```
 
 Vai trò của các tệp quản lý dữ liệu:
-- `manifest.json`: Tệp trung tâm điều phối trạng thái, lưu trữ tiến trình khám phá, mã băm SHA256 kiểm tra tính toàn vẹn của từng tệp mã nguồn và nhật ký lỗi nếu có.
+- `manifest.json`: Tệp trung tâm điều phối trạng thái, lưu trữ tiến trình khám phá, mã băm SHA256 kiểm tra tính toàn vẹn của từng tệp mã nguồn và nhật ký lỗi nếu có. Mỗi bản ghi trạng thái đều gắn liền với định danh MSSV phụ trách theo tệp cấu hình phân công.
 - `metadata.json`: Lưu thông tin chung của bài báo gồm tiêu đề, danh sách tác giả, ngày nộp, ngày cập nhật và nguồn gốc trích xuất.
 - `references.json`: Lưu danh mục tài liệu tham khảo thô nhận được từ Semantic Scholar.
 
-Quy tắc tạo thư mục phiên bản: Thư mục con dạng `v1/`, `v2/` chỉ được tạo trên đĩa khi có ít nhất một tệp `.tex` hoặc `.bib` được trích xuất thành công. Với các bài báo không nộp bằng LaTeX , chẳng hạn như bản nộp bằng PDF thuần túy,, hệ thống không tạo thư mục phiên bản rỗng mà ghi nhận trực tiếp trạng thái `source_status = "no_tex_source"` trong tệp `manifest.json`.
+Quy tắc tạo thư mục phiên bản: Thư mục con dạng `v1/`, `v2/` chỉ được tạo trên đĩa khi có ít nhất một tệp `.tex` hoặc `.bib` được trích xuất thành công. Với các bài báo không nộp bằng LaTeX, chẳng hạn như bản nộp bằng PDF thuần túy, hệ thống không tạo thư mục phiên bản rỗng mà ghi nhận trực tiếp trạng thái `source_status = "no_tex_source"` trong tệp `manifest.json`.
 
-## 4. Lược đồ hai bảng dữ liệu xuất bản
+## 5. Lược đồ hai bảng dữ liệu xuất bản
 
 Toàn bộ dữ liệu thu thập được lưu trữ tại kho cục bộ của nhóm trong hai giai đoạn đầu. Đến Giai đoạn 3, dữ liệu được chuyển đổi thành các bảng định dạng Parquet để phát hành. Hai bảng dữ liệu của Giai đoạn 1 gồm:
 
