@@ -28,7 +28,7 @@ Bảng `elements`: lưu các phần tử nội dung phân biệt qua mọi phiê
 | :--- | :--- | :--- | :--- |
 | `element_id` | String | Non-null, khóa chính | Định danh phần tử, ví dụ `2501-02642#s1` |
 | `arxiv_id` | String | Non-null | Số hiệu bài báo |
-| `kind` | String | Non-null | Loại phần tử gồm document, section, paragraph, sentence, block_formula, figure, table, item |
+| `kind` | String | Non-null | Loại phần tử theo từ điển chuẩn: `document`, `heading` (các cấp chương/mục), `paragraph`, `itemize`, `item`, và ba dạng nút lá gồm `sentence`, `block_formula`, `figure` (bao gồm cả bảng biểu `table`) |
 | `content` | String | Non-null | Nội dung văn bản sau khi dọn định dạng và chuẩn hóa toán |
 
 Bảng `hierarchy`: lưu các cạnh nối cha và con theo từng phiên bản.

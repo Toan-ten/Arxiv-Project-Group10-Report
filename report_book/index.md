@@ -33,10 +33,10 @@ Nhóm 10 gồm bốn thành viên. Phạm vi nghiên cứu thực nghiệm của
 
 | **Thành viên** | **MSSV** | **Khoảng arXiv ID** | **Số vị trí ID** | **Nhiệm vụ chính** |
 | :--- | :--- | :--- | :--- | :--- |
-| Trương Tuấn Anh | 24120260 | từ 2501.02642 đến 2501.07641 | 5.000 | [...] |
-| Nguyễn Văn Toàn | 24120232 | từ 2502.08235 đến 2502.13234 | 5.000 | [...] |
-| Lê Thành Đạt | 24120035 | từ 2507.16659 đến 2507.21658 | 5.000 | [...] |
-| Trần Văn Tấn Khôi | 24120010 | từ 2508.07872 đến 2508.12871 | 5.000 | [...] |
+| Trương Tuấn Anh | 24120260 | từ 2501.02642 đến 2501.07641 | 5.000 | Kiến trúc báo cáo Jupyter Book, trực quan hóa dữ liệu và tích hợp đường ống đánh giá |
+| Nguyễn Văn Toàn | 24120232 | từ 2502.08235 đến 2502.13234 | 5.000 | Quản lý dải ID, hợp đồng lưu trữ M1, HTTP client, trích xuất nguồn TeX, Semantic Scholar client và Batch/Benchmark Runner |
+| Lê Thành Đạt | 24120035 | từ 2507.16659 đến 2507.21658 | 5.000 | Thiết kế tập mẫu tất định (`pilot_10`, `pilot_500`) và bộ đo tài nguyên nền tảng (`benchmark.py`) |
+| Trần Văn Tấn Khôi | 24120010 | từ 2508.07872 đến 2508.12871 | 5.000 | Kiểm thử quy trình thu thập thực nghiệm, vận hành phiên đo trên Google Colab và kiểm toán dữ liệu |
 
 Con số 20.000 là số vị trí cần kiểm tra trên arXiv, không phân biệt chuyên ngành, và không phải số bài báo chắc chắn tồn tại. Trên thực tế, một số vị trí chưa được cấp phát hoặc bài báo đã bị rút. Mỗi bài báo tồn tại lại có thể có nhiều phiên bản. Do đó, số vị trí ID ứng viên, số bài báo hợp lệ và tổng số phiên bản là ba số đo khác nhau.
 

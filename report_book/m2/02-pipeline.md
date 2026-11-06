@@ -64,8 +64,8 @@ Bảng `elements`: lưu tập hợp phần tử phân biệt.
 | :--- | :--- | :--- |
 | `2501-02642#root1` | `document` | Phiên bản 1 gốc |
 | `2501-02642#root2` | `document` | Phiên bản 2 gốc |
-| `2501-02642#h1` | `section` | Introduction |
-| `2501-02642#h2` | `section` | Background and Related Work |
+| `2501-02642#h1` | `heading` | Introduction |
+| `2501-02642#h2` | `heading` | Background and Related Work |
 | `2501-02642#s1` | `sentence` | We study the citation matching problem on arXiv. |
 
 Bảng `hierarchy`: lưu các cạnh phân cấp theo phiên bản.

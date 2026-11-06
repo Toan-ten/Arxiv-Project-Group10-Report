@@ -1,60 +1,47 @@
 # Khám phá bài báo và danh sách phiên bản
 
-## 1. Khảo sát các phương thức tiếp cận danh mục arXiv
+## 1. Đối sánh các phương thức tiếp cận danh mục arXiv
 
-Bước đầu tiên trong quy trình xử lý dữ liệu là xác định trạng thái tồn tại của 20.000 vị trí số hiệu được giao và truy xuất danh sách mọi phiên bản công bố của từng bài báo.
+Bước đầu tiên của quy trình thu thập là kiểm tra sự tồn tại của 20.000 vị trí số hiệu được giao và xác định danh sách mọi phiên bản công bố của từng bài báo. Đề bài giới thiệu ba phương thức tiếp cận danh mục trên arXiv:
 
-Kho lưu trữ arXiv cung cấp ba phương thức tiếp cận danh mục dữ liệu chính:
-
-| **Phương thức** | **Định dạng dữ liệu** | **Ưu điểm** | **Hạn chế đối với phạm vi đồ án** |
+| **Phương thức** | **Giao diện và công cụ** | **Đặc điểm kỹ thuật** | **Đánh giá mức độ phù hợp với đồ án** |
 | :--- | :--- | :--- | :--- |
-| arXiv API [@arxiv-api-manual] | HTTP REST, Atom XML | Tra cứu trực tiếp theo danh sách số hiệu cụ thể bằng tham số `id_list`, trả về thông tin phiên bản mới nhất | Giới hạn tần suất tối thiểu 3,0 giây cho mỗi yêu cầu |
-| Giao thức OAI-PMH [@oai-pmh-arxiv] | XML Harvest Protocol | Phù hợp để thu hoạch hàng loạt theo khoảng ngày hoặc chuyên ngành, hỗ trợ phân trang tự động | Không hỗ trợ tra cứu trực tiếp theo danh sách số hiệu rời rạc, thẻ tiếp tục hết hạn sau 24 giờ [@oai-pmh-cutover] |
-| Bản sao Kaggle [@kaggle-arxiv] | Tệp nén JSON Lines | Đọc trực tiếp trên ổ đĩa cục bộ, không phụ thuộc vào đường truyền mạng hay giới hạn tần suất | Dữ liệu đóng gói tĩnh, không có các bài báo mới xuất bản trong năm 2025 |
+| **arXiv API** [@arxiv-api-manual; @arxiv-api-basics] | HTTP/Atom XML (`http://export.arxiv.org/api/query`), thư viện `arxiv.py` hoặc HTTP client chuẩn | Hỗ trợ truy vấn theo từ khóa (`search_query`), phân trang (`start`, `max_results`), sắp xếp (`sortBy`, `sortOrder`) và tra cứu trực tiếp theo số hiệu qua `id_list`. Trả về hậu tố phiên bản mới nhất (ví dụ `v4`). | **Phù hợp nhất:** Tra cứu chính xác từng số hiệu được giao và cho biết ngay tổng số phiên bản hiện có của bài báo. |
+| **Giao thức OAI-PMH** [@oai-pmh-arxiv; @oai-pmh-cutover] | XML Metadata Harvesting (`https://oaipmh.arxiv.org/oai` cập nhật từ 03/2025, thay cho `export.arxiv.org/oai2`), thư viện `Sickle` | Sử dụng các lệnh `Identify`, `ListRecords`, `ListIdentifiers` để thu hoạch hàng loạt theo khoảng ngày (`from`, `until`) và chuyên ngành (`set`). Từ bản cập nhật 03/2025, thẻ phân trang `resumptionToken` không còn chứa kích thước tập hợp và hết hạn sau 24 giờ. | **Không phù hợp cho tra cứu điểm:** Phù hợp để quét toàn kho theo thời gian, không hỗ trợ truy vấn trực tiếp danh sách 20.000 số hiệu chỉ định. |
+| **Tập dữ liệu Kaggle** [@kaggle-arxiv] | Tệp tĩnh JSON Lines (`Cornell-University/arxiv`), đọc bằng `pandas` | Cung cấp siêu dữ liệu đóng gói sẵn của hơn hai triệu bài báo, xử lý trực tiếp trên đĩa cục bộ không tốn yêu cầu mạng. | **Phụ trợ đối chiếu:** Phụ thuộc vào thời điểm cập nhật bản chụp (snapshot), không đảm bảo phản ánh tức thời trạng thái phiên bản mới nhất và không thay thế bước tải nguồn theo phiên bản. |
 
-Dựa trên đặc thù của đề bài là xử lý danh sách 20.000 số hiệu cụ thể trong năm 2025, nhóm lựa chọn arXiv API làm phương thức thu thập chính.
+Từ đối sánh trên, nhóm sử dụng trực tiếp **arXiv API** để phân giải từng số hiệu ứng viên trong bốn khoảng được giao.
 
-## 2. Truy vấn trực tiếp qua arXiv API
+## 2. Truy vấn đơn lẻ qua arXiv API
 
-Điểm cuối truy vấn chính thức của arXiv được triển khai tại địa chỉ:
+Hệ thống gửi yêu cầu HTTP GET tới điểm cuối truy vấn:
 $$\text{https://export.arxiv.org/api/query}$$
 
-Hệ thống gửi yêu cầu HTTP GET kèm các tham số truy vấn:
-- `id_list`: Truyền số hiệu gốc của bài báo cần tra cứu, ví dụ `2501.02642`.
-- `start`: Đặt giá trị 0 để đọc từ kết quả đầu tiên.
-- `max_results`: Đặt giá trị 1 do mỗi số hiệu đại diện cho một ấn phẩm duy nhất.
+Các tham số truyền vào gồm:
+- `id_list`: Số hiệu gốc cần tra cứu, ví dụ `2501.02642`.
+- `start = 0` và `max_results = 1`: Giới hạn đọc đúng bản ghi của số hiệu đang xét.
 
-Máy chủ phản hồi dữ liệu theo định dạng Atom XML kèm tiêu đề `Content-Type: application/atom+xml`.
+Máy chủ phản hồi tài liệu Atom XML kèm tiêu đề `Content-Type: application/atom+xml`. Dù tham số `id_list` hỗ trợ truyền nhiều số hiệu cách nhau bằng dấu phẩy, nhóm chọn phương án **mỗi yêu cầu chỉ tra cứu đúng một số hiệu (`max_results = 1`)** vì ba lý do kỹ thuật:
+1. Cô lập trạng thái: Kết quả khám phá của từng số hiệu được ghi độc lập vào `manifest.json` tương ứng, không bị ảnh hưởng nếu một số hiệu khác trong lô gặp lỗi.
+2. Kiểm tra chặt chẽ phản hồi: Bộ phân tích kiểm tra số lượng thẻ `<entry>`. Nếu phản hồi chứa nhiều hơn một `<entry>` hoặc `totalResults` mâu thuẫn, hệ thống từ chối bản ghi để tránh ghép nhầm siêu dữ liệu giữa các bài báo.
+3. Khớp với cơ chế phục hồi từng bài: Tiến trình có thể dừng hoặc tiếp tục tại bất kỳ bài báo nào mà không phải chạy lại cả lô.
 
-Về mặt kỹ thuật, hệ thống áp dụng triệt để chiến lược tra cứu đơn lẻ từng số hiệu: Mỗi yêu cầu chỉ kiểm tra duy nhất một số hiệu với tham số `max_results = 1`. Mặc dù tham số `id_list` của arXiv API trên lý thuyết cho phép truyền chuỗi nhiều số hiệu phân tách bằng dấu phẩy, việc gom nhiều số hiệu vào một lượt gọi làm tăng nguy cơ sai lệch trạng thái khi phản hồi bị lỗi một phần hoặc thiếu hụt thẻ kết quả.
+## 3. Xây dựng bộ phân tích Atom XML bằng thư viện chuẩn
 
-Bằng việc ràng buộc một yêu cầu tương ứng một số hiệu duy nhất, hệ thống đạt được ba lợi ích kỹ thuật quan trọng:
-1. Cô lập hoàn toàn trạng thái: Trạng thái khám phá của từng số hiệu được ghi nhận độc lập và lập tức vào tệp `manifest.json` tương ứng mà không bị phụ thuộc vào kết quả của các số hiệu khác.
-2. Kiểm tra tính toàn vẹn khắt khe: Bộ bóc tách Atom XML chủ động xác thực số lượng phần tử trả về. Nếu phản hồi chứa nhiều hơn một thẻ `<entry>` hoặc trường tổng số kết quả `totalResults` khác 1, hệ thống lập tức báo lỗi để ngăn ngừa việc nhầm lẫn dữ liệu giữa các bài báo.
-3. Đồng bộ hoàn hảo với điểm kiểm soát: Tiến trình thu thập có thể dừng hoặc khôi phục an toàn tại bất kỳ bài báo nào mà không để lại các trạng thái ghi dở dang trên hệ thống tệp.
+Thư viện bên thứ ba `arxiv.py` [@arxiv-py-github] đã trải qua các thay đổi không tương thích ngược từ phiên bản 2.x lên 4.0.0 (tháng 05/2026), loại bỏ các phương thức cũ như `search.results()`, `Result.download_pdf()` và `Result.download_source()`. Để không phụ thuộc vào thay đổi của thư viện ngoài, nhóm xây dựng trực tiếp module `src.arxiv_client` và `src.arxiv_discovery` bằng thư viện chuẩn Python:
 
-## 3. Tự xây dựng bộ bóc tách Atom XML qua thư viện chuẩn
+- Module `urllib.request` gửi yêu cầu HTTP kèm định danh `User-Agent` của Nhóm 10 và nhận luồng dữ liệu byte.
+- Module `xml.etree.ElementTree` phân tích cây XML theo không gian tên chuẩn của Atom (`http://www.w3.org/2005/Atom`), OpenSearch (`http://a9.com/-/spec/opensearch/1.1/`) và arXiv (`http://arxiv.org/schemas/atom`).
 
-Thay vì phụ thuộc vào thư viện bên ngoài `arxiv.py` vốn đã trải qua nhiều thay đổi cấu trúc mã nguồn, nhóm tự thiết kế module kết nối mạng và phân tích cú pháp bằng thư viện chuẩn của Python:
+## 4. Xác định danh sách phiên bản từ hậu tố mới nhất
 
-- Module `urllib.request` đảm nhiệm việc gửi yêu cầu HTTP và tiếp nhận luồng dữ liệu byte.
-- Module `xml.etree.ElementTree` đảm nhiệm việc bóc tách cây XML với không gian tên chuẩn của Atom (`http://www.w3.org/2005/Atom`) và OpenSearch (`http://a9.com/-/spec/opensearch/1.1/`).
-
-Giải pháp này loại bỏ nguy cơ xung đột phiên bản thư viện bên ngoài, giúp hệ thống vận hành ổn định và độc lập trên mọi môi trường thử nghiệm.
-
-## 4. Xác định toàn bộ danh sách phiên bản
-
-Khi gửi yêu cầu tra cứu một số hiệu gốc như `2501.02642`, máy chủ arXiv trả về thông tin của phiên bản mới nhất hiện có trong phần tử `<entry>`.
-
-Quy trình xác định danh sách mọi phiên bản được thực hiện như sau:
-1. Trích xuất định danh phiên bản mới nhất: Bộ phân tích đọc đường dẫn trong thẻ `<id>` hoặc thẻ liên kết `<link rel="alternate">` của phần tử `<entry>`. Đường dẫn này luôn kết thúc bằng số hiệu kèm hậu tố phiên bản, ví dụ `https://arxiv.org/abs/2501.02642v3`.
-2. Phân tích biểu thức chính quy: Hệ thống dùng mẫu biểu thức chính quy để tách số hiệu gốc `2501.02642` và chỉ số phiên bản lớn nhất $N = 3$.
-3. Khởi tạo danh sách phiên bản đầy đủ: Từ chỉ số lớn nhất $N$, hệ thống tự động suy diễn danh sách tuần tự gồm các phiên bản `v1`, `v2`, ..., `vN` cần tải về.
-
-Với các bài báo chỉ công bố một lần duy nhất, định danh trả về mang hậu tố `v1` và hệ thống ghi nhận đúng một phiên bản duy nhất.
+Khi tra cứu một số hiệu gốc như `2501.02642`, arXiv API trả về thông tin của phiên bản mới nhất trong thẻ `<entry>`. Quy trình suy diễn danh sách phiên bản trong `parse_arxiv_response()` gồm ba bước:
+1. Đọc định danh phiên bản mới nhất từ thẻ `<id>` hoặc `<link rel="alternate">` (ví dụ `http://arxiv.org/abs/2501.02642v3`).
+2. Dùng biểu thức chính quy tách số hiệu gốc `2501.02642` (kiểm tra khớp với số hiệu đã hỏi) và lấy số thứ tự phiên bản lớn nhất $N = 3$.
+3. Sinh danh sách đầy đủ các phiên bản từ `v1`, `v2` đến `vN` với trạng thái `version_status = "resolved"`. Nếu bài báo chỉ nộp một lần, hậu tố trả về là `v1` và danh sách gồm đúng một phiên bản `2501.02642v1`. Nếu phản hồi không có hậu tố phiên bản rõ ràng, hệ thống đánh dấu `version_status = "needs_verification"` thay vì tự đoán là `v1`.
 
 ## 5. Xử lý các vị trí số hiệu không tồn tại
 
-Trong tổng số 20.000 vị trí số hiệu được giao, không phải mọi vị trí đều tương ứng với một bài báo thực tế do việc nộp bài bị hủy hoặc số hiệu chưa được cấp.
+Trong 20.000 vị trí số hiệu được giao, các số hiệu vượt quá tổng số bài nộp thực tế của tháng hoặc bị hủy trước khi công bố sẽ không tồn tại trên hệ thống.
 
-Khi gặp một số hiệu không tồn tại, máy chủ arXiv phản hồi tài liệu Atom XML không chứa bất kỳ thẻ `<entry>` nào, hoặc trường tiêu đề thông báo lỗi. Bộ phân tích nhận diện trường hợp này và gán trạng thái `not_found`. Trạng thái này được ghi nhận trực tiếp vào tệp `manifest.json` của bài báo nhằm bảo toàn chính xác mẫu số 20.000 khi tính toán tỷ lệ thành công và tỷ lệ bao phủ của đề tài.
+Khi tra cứu một số hiệu không tồn tại, arXiv API trả về tài liệu Atom XML hợp lệ (HTTP 200) nhưng không chứa thẻ `<entry>` nào. Hàm `parse_arxiv_response()` nhận diện trường hợp này và trả về trạng thái `not_found`. Lưu ý rằng lỗi HTTP 404 hoặc lỗi đứt kết nối mạng được phân loại riêng thành `http_error` / `connection_error`, không bị gộp nhầm thành `not_found`. Trạng thái `not_found` được lưu vào `manifest.json` để giữ nguyên mẫu số 20.000 vị trí khi thống kê toàn cục.

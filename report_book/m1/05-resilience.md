@@ -22,11 +22,12 @@ Hệ thống phân loại và xử lý lỗi mạng theo quy trình:
 
 ## 3. Chính sách dừng khẩn cấp bảo vệ địa chỉ IP
 
-Nhằm bảo vệ an toàn cho dải địa chỉ IP của nhóm không bị đưa vào danh sách đen của máy chủ arXiv, hệ thống cài đặt chính sách ngắt khẩn cấp:
+Nhằm bảo vệ an toàn cho dải địa chỉ IP của nhóm không bị đưa vào danh sách đen của máy chủ arXiv, hệ thống cài đặt chính sách dừng có kiểm soát trong `src.pipeline` và `src.batch`:
 
-Khi máy chủ trả về mã lỗi HTTP 403 hoặc HTTP 429 ở lần thử cuối cùng, hệ thống không tiếp tục gửi yêu cầu cho các bài báo tiếp theo. Tiến trình lập tức kích hoạt lỗi dừng `PipelineStopped`, lưu lại toàn bộ tiến độ đã đạt được xuống đĩa và ngắt chương trình.
+- Dừng theo chính sách HTTP (`http_policy`): Khi máy chủ trả về mã lỗi HTTP 403 hoặc HTTP 429 sau khi đã hết số lần thử (`max_attempts`), đường ống không gửi tiếp yêu cầu cho các phiên bản hoặc bài báo kế tiếp. Thay vì làm sập chương trình, hàm `run_selected()` lưu kết quả và trạng thái lỗi hiện tại (`http_error` cho 403, `rate_limited` cho 429) vào điểm kiểm soát qua `CorpusStorage`, sau đó kết thúc êm đẹp và trả về báo cáo tổng hợp với cờ `stopped = True` kèm chi tiết `stop_reason` (gồm giai đoạn gặp lỗi, mã HTTP, MSSV, số hiệu bài báo, phiên bản và trạng thái `checkpoint_saved = True`). Ở tầng điều phối lô, `BatchRunner` ghi nhận trạng thái phiên chạy là `stopped` vào nhật ký bền vững.
+- Dừng do lỗi lưu trữ nghiêm trọng (`PipelineStopped`): Ngoại lệ `PipelineStopped` chỉ được kích hoạt khi xảy ra lỗi đọc/ghi I/O trên hệ thống tệp khi lưu JSON, khi bộ tải nguồn báo `storage_error`, hoặc khi phát sinh ngoại lệ hệ thống bất thường, giúp bảo vệ dữ liệu đã thu thập không bị ghi đè sai lệch.
 
-Chính sách này ngăn ngừa việc một lỗi cấu hình vô tình gửi hàng ngàn yêu cầu lỗi lên máy chủ trong thời gian ngắn. Khi muốn khởi động lại hệ thống sau khi kiểm tra nguyên nhân, người vận hành bắt buộc phải kích hoạt cờ xác nhận `resume=True` một cách chủ động.
+Chính sách phân tách này ngăn ngừa việc một lỗi cấu hình hoặc giới hạn tần suất vô tình gửi hàng ngàn yêu cầu lỗi lên máy chủ trong thời gian ngắn. Khi muốn tiếp tục lô thu thập sau khi đã kiểm tra nguyên nhân từ nhật ký, người vận hành phải chủ động kích hoạt cờ xác nhận `resume = True`.
 
 ## 4. Cơ chế ghi tệp an toàn bảo toàn tính toàn vẹn dữ liệu
 
@@ -35,9 +36,9 @@ Quá trình thu thập 20.000 bài báo kéo dài nhiều giờ và có nguy cơ
 - Ghi tệp an toàn chống sự cố: Mọi tệp dữ liệu JSON gồm `manifest.json`, `metadata.json` và `references.json` đều được ghi bằng cơ chế ghi an toàn. Dữ liệu được ghi trước vào một tệp tạm mang đuôi `.tmp` nằm cùng thư mục, sau đó gọi phương thức `flush()` và lệnh đồng bộ phần cứng `os.fsync()`. Khi dữ liệu đã nằm an toàn trên phiến đĩa vật lý, hệ thống dùng hàm `os.replace()` để đổi tên tệp tạm đè lên tệp chính thức. Thao tác đổi tên này được hệ điều hành xử lý trọn vẹn trong một bước duy nhất, loại bỏ hoàn toàn nguy cơ tệp bị ghi dở dang khi xảy ra sự cố dừng tiến trình đột ngột.
 - Khóa an toàn thư mục: Hệ thống từ chối ghi đè lên các thư mục phiên bản đã có sẵn tệp mã nguồn để bảo toàn tính toàn vẹn của dữ liệu đã tải trước đó.
 
-## 5. Mô hình điểm phục hồi ba tầng và cơ chế cào nhiều lần
+## 5. Mô hình điểm phục hồi ba tầng và cơ chế chạy lại nhiều phiên
 
-Trong kiến trúc thu thập dữ liệu phân tán, khả năng chịu lỗi và cơ chế thực thi nhiều đợt là yêu cầu kỹ thuật trọng tâm nhằm tối ưu hóa độ bao phủ của tập dữ liệu khi đối mặt với sự cố ngắt quãng mạng. Hệ thống thiết lập mô hình điểm phục hồi ba tầng:
+Để duy trì tiến độ thu thập xuyên suốt nhiều phiên làm việc trên Google Colab mà không phải tải lại từ đầu khi đứt mạng, hệ thống lưu điểm phục hồi ở ba tầng:
 
 1. Tầng đợt chạy: Quản lý qua tệp nhật ký `batch.json` và các tệp vết `attempts/<id>.json`. Mỗi lần thực thi được cấp một mã định danh duy nhất, ghi nhận chính xác danh sách các số hiệu đã hoàn thành và số hiệu còn tồn đọng.
 2. Tầng bài báo: Quản lý qua tệp `manifest.json` trong từng thư mục ấn phẩm. Tệp này lưu trữ trạng thái tổng hợp của bài báo (`complete`, `complete_with_no_tex`, `partial`, `failed`).

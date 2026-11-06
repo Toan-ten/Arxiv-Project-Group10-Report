@@ -12,16 +12,18 @@ project:
     - references.bib
   toc:
     - file: index.md
-    - file: m1/01-overview.md
+    - title: "Giai đoạn 1: Thu thập dữ liệu"
       children:
+        - file: m1/01-overview.md
         - file: m1/02-discovery.md
         - file: m1/03-source-extraction.md
         - file: m1/04-references.md
         - file: m1/05-resilience.md
         - file: m1/06-statistics.ipynb
         - file: m1/07-benchmark.ipynb
-    - file: m2/01-overview.md
+    - title: "Giai đoạn 2: Phân tích cú pháp và chuẩn hóa"
       children:
+        - file: m2/01-overview.md
         - file: m2/02-pipeline.md
         - file: m2/03-statistics.ipynb
         - file: m2/04-benchmark.ipynb
